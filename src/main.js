@@ -1,5 +1,5 @@
 import store from './store/store';
-import { addNote } from './actions/actions';
+import { addNote, removeNote } from './actions/actions';
 
 //we use store.get() to get our app state from the store
 console.log('Before:', store.getState());
@@ -16,12 +16,29 @@ let addNoteContent = addNoteForm['content'];
 
 // ------ redux ------
 function deleteNote(index){
-    //console.log(index);
+    store.dispatch(removeNote(index));
+    // console.log(index);
 }
 
 function renderNotes(){
+    let notes = store.getState().notes;
+
+    notesUList.innerHTML = '';
+    notes.map((note,index) => {
+        let noteItem = `
+        <li>
+        <b>${ note.title }</b>
+        <button data-id=${ index }>x</button>
+        <br />
+        <span>${ note.content}</span>
+        </li>
+        `;
+        notesUList.innerHTML+= noteItem;
+    });
     setDeleteNoteButtonEventListeners();
 }
+
+
 
 // ------ Event Listener ------
 
@@ -30,7 +47,7 @@ addNoteForm.addEventListener('submit',(e) => {
     let title = addNoteTitle.value;
     let content = addNoteContent.value;
     store.dispatch(addNote(title,content));
-    //console.log('Title:',addNoteTitle.value, 'Content:',addNoteContent.value)
+    // console.log('Title:',addNoteTitle.value, 'Content:',addNoteContent.value)
 });
 
 function setDeleteNoteButtonEventListeners(){
@@ -41,6 +58,10 @@ function setDeleteNoteButtonEventListeners(){
         });
     }
 }
+
+store.subscribe(() => {
+    renderNotes();
+  });
 
 // ------ render the initial notes ------
 

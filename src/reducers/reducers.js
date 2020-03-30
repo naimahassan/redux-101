@@ -1,8 +1,18 @@
-import { ADD_NOTE } from '../actions/actions';
+import { ADD_NOTE,REMOVE_NOTE } from '../actions/actions';
+import notesReducer from './notesReducer';
+import visibilityFilter from './visibilityFilter';
+import { combineReducers } from 'redux';
+
+const reducers = combineReducers({
+    notes:notesReducer,
+    visibilityFilter:visibilityFilter
+})
 
 const initialState = {
     notes:[]
 };
+
+
 
 function rootReducer(state = initialState,action){
     switch(action.type){
@@ -16,9 +26,13 @@ function rootReducer(state = initialState,action){
                     }
                 ]
             };
-            default:
-                return state;
+            case REMOVE_NOTE:
+                return {
+                  notes: state.notes.filter((note, index) => index != action.id)
+                };    
+                default:
+                    return state;
     };
 }
 
-export default rootReducer;
+export default reducers;
